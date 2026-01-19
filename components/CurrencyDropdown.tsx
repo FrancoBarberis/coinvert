@@ -2,62 +2,87 @@
 "use client";
 
 import {
-    DropdownMenu,
-    DropdownMenuTrigger,
-    DropdownMenuContent,
-    DropdownMenuItem,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { CURRENCY_CODES as currencyCodes } from "../data/currency-codes";
 
 type CurrencyDropdownProps = {
-    /** Código seleccionado actual (ej.: "ARS") */
-    currencyName: string;
-    /** Callback al elegir una moneda en el menú */
-    onChange?: (code: string) => void;
-    /** Lista opcional para sobrescribir los códigos (si vienen del socket/snapshot) */
-    options?: string[];
+  currencyName: string;
+  onChange?: (code: string) => void;
+  options?: string[];
 };
 
 export default function CurrencyDropdown({
-    currencyName,
-    onChange,
-    options,
+  currencyName,
+  onChange,
+  options,
 }: CurrencyDropdownProps) {
-    const codes = options ?? currencyCodes;
+  const codes = options ?? currencyCodes;
 
-    return (
-        <>
+  return (
+    <div className="mx-auto w-[90%] lg:w-[40%]">
+      {/* Grupo unido: trigger + input */}
+      <div className="flex flex-col gap-0">
         <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="min-w-[90%] min-h-12 m-0 justify-between text-neutral-900 bg-blue-400 border-neutral-200 hover:bg-neutral-50 dark:text-neutral-100 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:bg-neutral-800 max-w-[90%] lg:min-w-[40%] lg:max-w-[50%]" >
-                    <span className="font-semibold">{currencyName}</span>
-                    <span aria-hidden>▾</span>
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-                align="start"
-                sideOffset={6}
-                className="
-          w-48 max-h-64 overflow-auto
-          bg-white text-neutral-900
-          dark:bg-neutral-900 dark:text-neutral-100
-        "
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              className="
+                h-12 w-full m-0
+                justify-between
+                text-neutral-900 bg-white border border-neutral-200
+                rounded-b-none  /* une con el input */
+                hover:bg-neutral-50
+                dark:text-neutral-100 dark:bg-neutral-900 dark:border-neutral-700
+                dark:hover:bg-neutral-800
+              "
             >
-                {codes.map((code) => (
-                    <DropdownMenuItem
-                        key={code}
-                        onClick={() => onChange?.(code)}
-                        className={code === currencyName ? "font-semibold" : undefined}
-                    >
-                        {code}
-                    </DropdownMenuItem>
-                ))}
-            </DropdownMenuContent>
+              <span className="font-semibold">{currencyName}</span>
+              <span aria-hidden>▾</span>
+            </Button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent
+            align="start"
+            sideOffset={6}
+            className="
+              w-48 max-h-64 overflow-auto
+              bg-white text-neutral-900
+              dark:bg-neutral-900 dark:text-neutral-100
+              z-50
+            "
+          >
+            {codes.map((code) => (
+              <DropdownMenuItem
+                key={code}
+                onClick={() => onChange?.(code)}
+                className="font-medium text-[.8rem] cursor-pointer"
+              >
+                {code}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
         </DropdownMenu>
-        {/* TODO: add id and attribute */}
-        <input type="text" placeholder="0" className="bg-red-400 m-0 min-w-[90%] min-h-12 text-right text-lg pr-3 lg:min-w-[40%] lg:max-w-[50%]" />
-    </>
-    
-    );
+
+        {/* Input unido al trigger */}
+        <input
+          type="text"
+          placeholder="0"
+          className="
+            h-12 w-full m-0
+            text-right text-lg pr-3
+            bg-white text-neutral-900
+            border border-t-green-700 border-t-2
+            rounded-bl-md
+            rounded-br-md
+            dark:bg-neutral-900 dark:text-neutral-100 dark:border-neutral-700
+          "
+        />
+      </div>
+    </div>
+  );
 }

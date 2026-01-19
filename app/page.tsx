@@ -9,7 +9,7 @@ export default function Home() {
       <CurrencyDropdown currencyName="USD"></CurrencyDropdown>
       <Button>I</Button>
       <CurrencyDropdown currencyName="ARS"></CurrencyDropdown>
-      <p className="text-2xl">1 USD = 1450 ARS</p>
+      <p className="text-sm">1 USD = 1450 ARS</p>
       <p className="text-sm">Last updated: 1 min ago</p>
     </div>
   );
