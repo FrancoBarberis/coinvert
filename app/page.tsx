@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
-    <div className="items-center justify-center w-full h-full flex flex-col text-5xl gap-10  ">
-      <h1 className="font-extrabold text-emerald-500 mt-4">Coinvert</h1>
+    <div className="items-center justify-center w-full h-screen flex flex-col text-5xl gap-7 mt-3 lg:gap-4">
+      <h1 className="font-extrabold text-emerald-500 lg:text-3xl ">Coinvert</h1>
       <h3 className="text-lg text-center max-w-[90%]">Your free currency convertion tool</h3>
       <CurrencyDropdown currencyName="USD"></CurrencyDropdown>
       <Button>I</Button>

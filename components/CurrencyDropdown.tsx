@@ -8,10 +8,6 @@ import {
     DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-
-// Si exportaste con nombre en tu archivo:
-//   export const CURRENCY_CODES = [...];
-// entonces este import es correcto:
 import { CURRENCY_CODES as currencyCodes } from "../data/currency-codes";
 
 type CurrencyDropdownProps = {
@@ -34,7 +30,7 @@ export default function CurrencyDropdown({
         <>
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="min-w-[90%] min-h-12 m-0 justify-between text-neutral-900 bg-white border-neutral-200 hover:bg-neutral-50 dark:text-neutral-100 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:bg-neutral-800 max-w-[90%]" >
+                <Button variant="outline" className="min-w-[90%] min-h-12 m-0 justify-between text-neutral-900 bg-blue-400 border-neutral-200 hover:bg-neutral-50 dark:text-neutral-100 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:bg-neutral-800 max-w-[90%] lg:min-w-[40%] lg:max-w-[50%]" >
                     <span className="font-semibold">{currencyName}</span>
                     <span aria-hidden>▾</span>
                 </Button>
@@ -58,10 +54,9 @@ export default function CurrencyDropdown({
                     </DropdownMenuItem>
                 ))}
             </DropdownMenuContent>
-
         </DropdownMenu>
         {/* TODO: add id and attribute */}
-        <input type="text" placeholder="0" className="bg-red-400 m-0 min-w-[90%] min-h-12 text-right text-lg pr-3" />
+        <input type="text" placeholder="0" className="bg-red-400 m-0 min-w-[90%] min-h-12 text-right text-lg pr-3 lg:min-w-[40%] lg:max-w-[50%]" />
     </>
     
     );
