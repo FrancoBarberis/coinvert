@@ -31,15 +31,14 @@ export default function CurrencyDropdown({
     const codes = options ?? currencyCodes;
 
     return (
-
+        <>
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="min-w-28 justify-between text-neutral-900 bg-white border-neutral-200 hover:bg-neutral-50 dark:text-neutral-100 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:bg-neutral-800" >
+                <Button variant="outline" className="min-w-[90%] min-h-12 m-0 justify-between text-neutral-900 bg-white border-neutral-200 hover:bg-neutral-50 dark:text-neutral-100 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:bg-neutral-800 max-w-[90%]" >
                     <span className="font-semibold">{currencyName}</span>
                     <span aria-hidden>▾</span>
                 </Button>
             </DropdownMenuTrigger>
-
             <DropdownMenuContent
                 align="start"
                 sideOffset={6}
@@ -61,6 +60,9 @@ export default function CurrencyDropdown({
             </DropdownMenuContent>
 
         </DropdownMenu>
-
+        {/* TODO: add id and attribute */}
+        <input type="text" placeholder="0" className="bg-red-400 m-0 min-w-[90%] min-h-12 text-right text-lg pr-3" />
+    </>
+    
     );
 }

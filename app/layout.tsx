@@ -14,7 +14,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className="min-h-screen w-full text-white bg-linear-to-t from-emerald-500 via-sky-500 to-fuchsia-500"
+        className="min-h-screen w-full text-white bg-linear-to-t from-gray-500 to-gray-700 flex flex-col items-center justify-center"
       >
         {children}
       </body>
