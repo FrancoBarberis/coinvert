@@ -1,0 +1,43 @@
+app/
+  layout.tsx
+  page.tsx                         # landing: ARS ↔ USD con inputs y dropdowns
+  api/
+    quotes/route.ts                # (opcional) proxy SSE/WebSocket/HTTP cacheado
+  (marketing)/                      # ejemplo de grupo opcional
+  convert/
+    page.tsx                       # página /convert con más controles
+  dashboard/
+    page.tsx                       # página /dashboard con tabla, favoritos, gráficos
+components/
+  CurrencyDropdown.tsx             # tu dropdown (cliente)
+  RoundIconButton.tsx              # botón circular de swap (cliente)
+  QuoteTicker.tsx                  # marquee/ticker con últimos precios
+  Loader.tsx
+  ErrorView.tsx
+components/ui/                     # shadcn/ui: button, dropdown-menu, etc.
+lib/
+  fetcher.ts                       # fetch con cache tags, revalidate, etc.
+  sse.ts                           # helpers para Server-Sent Events (si usás SSE)
+  ws.ts                            # helpers para WebSocket (cliente)
+  math.ts                          # redondeos, formatos, Big.js (si lo integrás)
+  format.ts                        # i18n, currency format
+  cache.ts                         # utilidades de caching Next (tags, revalidate)
+services/
+  quotes/
+    http.ts                        # gets/streams (HTTP) a tu backend
+    sse.client.ts                  # suscripción SSE en cliente (si aplica)
+    ws.client.ts                   # suscripción WS en cliente (si aplica)
+    mock.ts                        # mock data para dev/offline
+  currencies/
+    list.ts                        # lista de monedas soportadas, metadatos
+hooks/
+  useRealtimeQuotes.ts             # hook cliente para WS/SSE
+  useConversion.ts                 # lógica de conversión, swap, redondeo
+types/
+  quotes.ts                        # Quote, Ticker, Candle, etc.
+  currency.ts                      # CurrencyCode, Pair, etc.
+styles/
+  globals.css                      # tailwind import (Next ya la crea)
+public/
+  icons/
+  flags/                           # banderitas si las self-host
