@@ -14,7 +14,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`antialiased`}
+        className="min-h-screen w-full text-white bg-linear-to-t from-emerald-500 via-sky-500 to-fuchsia-500"
       >
         {children}
       </body>
