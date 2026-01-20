@@ -34,10 +34,11 @@ export default function CurrencyDropdown({
               className="
                 h-12 w-full m-0
                 justify-between
-                text-neutral-900 bg-white border border-neutral-200
+                text-neutral-900 border border-neutral-200
                 rounded-b-none
                 hover:cursor-pointer
-                hover:bg-neutral-50
+                bg-emerald-500
+                hover:bg-emerald-400
                 dark:text-neutral-100 dark:bg-neutral-900 dark:border-neutral-700
                 dark:hover:bg-neutral-800
               "
