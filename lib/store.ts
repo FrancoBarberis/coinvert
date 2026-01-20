@@ -24,15 +24,19 @@ const useAppStore = create<AppState>(() => ({
         useAppStore.setState({ monedaOrigen: currentDestino, monedaDestino: currentOrigen });
     },
     obtainRates: async () =>{
-        const freshRates = await fetch(`${backend}/api/rates`, {
+        try {
+            const freshRates = await fetch(`${backend}/api/rates`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
             }
         })
         const jsonRates = await freshRates.json();
-        console.log(jsonRates);
-        return jsonRates;
+        useAppStore.setState( { rates:jsonRates})
+        console.log(jsonRates)
+        } catch (error) {
+            console.log("Fetch error")
+        }   
     }
 }));
 
