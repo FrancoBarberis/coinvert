@@ -71,8 +71,9 @@ export default function CurrencyDropdown({
 
         {/* Input unido al trigger */}
         <input
-          type="text"
+          type="number"
           placeholder="0"
+          min={0}
           className="
             h-12 w-full m-0
             text-right text-lg pr-3

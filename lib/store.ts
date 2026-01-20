@@ -11,6 +11,7 @@ interface AppState {
     obtainRates: () => void;
 }
 
+const backend = process.env.NEXT_PUBLIC_BACKEND_URL;
 const useAppStore = create<AppState>(() => ({
     rates: null,
     monedaOrigen: "USD",
@@ -22,8 +23,16 @@ const useAppStore = create<AppState>(() => ({
         const currentDestino = useAppStore.getState().monedaDestino;
         useAppStore.setState({ monedaOrigen: currentDestino, monedaDestino: currentOrigen });
     },
-    obtainRates: () =>{
-        return;
+    obtainRates: async () =>{
+        const freshRates = await fetch(`${backend}/api/rates`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        const jsonRates = await freshRates.json();
+        console.log(jsonRates);
+        return jsonRates;
     }
 }));
 
