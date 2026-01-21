@@ -73,7 +73,6 @@ export default function CurrencyDropdown({
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
-
         {/* Input unido al trigger */}
         <input
           type="number"

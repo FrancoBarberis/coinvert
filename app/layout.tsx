@@ -1,5 +1,6 @@
 
 import "./globals.css";
+import type { Metadata } from "next";
 
 // TODO:
 // io("https://tu-backend.com", { transports: ["websocket", "polling"] });
