@@ -14,12 +14,16 @@ type CurrencyDropdownProps = {
   currencyName: string;
   onChange?: (code: string) => void;
   options?: string[];
+  amount: string;
+  onAmountChange: (v:string) => void;
 };
 
 export default function CurrencyDropdown({
   currencyName,
   onChange,
   options,
+  amount,
+  onAmountChange
 }: CurrencyDropdownProps) {
   const codes = options ?? currencyCodes;
 
@@ -73,7 +77,8 @@ export default function CurrencyDropdown({
         {/* Input unido al trigger */}
         <input
           type="number"
-          placeholder="0"
+          value={amount}
+          onChange={(e) => onAmountChange(e.target.value)}
           min={0}
           className="
             h-12 w-full m-0
