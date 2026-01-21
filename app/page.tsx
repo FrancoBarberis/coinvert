@@ -120,7 +120,7 @@ export default function Home() {
 
       {/* Ratio y metadata */}
       <p className="text-sm">
-        1 {monedaOrigen} = {loadingRate ? "…" : (rate ? rate.toFixed(6) : "—")} {monedaDestino}
+        1 {monedaOrigen} = {loadingRate ? "…" : (rate ? rate.toFixed(2) : "—")} {monedaDestino}
       </p>
       <p className="text-xs text-neutral-500">
         Last updated: {lastUpdatedText} {isSnapshotFresh() ? "" : <span className="text-amber-500 ml-1">stale</span>}

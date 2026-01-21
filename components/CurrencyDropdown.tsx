@@ -15,7 +15,7 @@ type CurrencyDropdownProps = {
   onChange?: (code: string) => void;
   options?: string[];
   amount: string;
-  onAmountChange: (v:string) => void;
+  onAmountChange: (v: string) => void;
 };
 
 export default function CurrencyDropdown({
@@ -78,6 +78,13 @@ export default function CurrencyDropdown({
         <input
           type="number"
           value={amount}
+          onFocus={(e) => {
+            const input = e.currentTarget;
+            // Esperar al siguiente tick evita peleas con el focus en algunos browsers
+            setTimeout(() => {
+              input.select();
+            }, 0);
+          }}
           onChange={(e) => onAmountChange(e.target.value)}
           min={0}
           className="
