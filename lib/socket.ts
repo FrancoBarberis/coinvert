@@ -6,20 +6,38 @@ const isBrowser = () => typeof window !== "undefined";
 
 let socket: Socket | null = null;
 
-const DEFAULT_URL =
-  (isBrowser() ? (window as any).__SOCKET_URL__ : process.env.NEXT_PUBLIC_SOCKET_URL) ||
-  "http://127.0.0.1:4000";
+function requiredEnv(name: string): string {
+  const val = process.env[name as keyof typeof process.env] as string | undefined;
+  if (!val) {
+    // En cliente, además logueamos en consola
+    if (isBrowser()) {
+      // @ts-ignore
+      console.error(`[socket] Falta variable pública ${name}`);
+    }
+    throw new Error(`Missing env ${name}`);
+  }
+  return val;
+}
 
-const DEFAULT_PATH = process.env.NEXT_PUBLIC_SOCKET_PATH || "/socket.io";
+/**
+ * Tomamos SIEMPRE la URL desde NEXT_PUBLIC_SOCKET_URL.
+ * Sin fallback a localhost en producción para no “colarnos”.
+ */
+const SOCKET_URL = (() => {
+  // En cliente, las NEXT_PUBLIC_* están “incrustadas” en el bundle
+  return requiredEnv("NEXT_PUBLIC_SOCKET_URL");
+})();
+
+const SOCKET_PATH = process.env.NEXT_PUBLIC_SOCKET_PATH || "/socket.io";
 
 export function getSocket(): Socket {
   if (!isBrowser()) {
     throw new Error("getSocket() sólo puede usarse del lado del cliente");
   }
   if (!socket) {
-    socket = io(DEFAULT_URL, {
-      path: DEFAULT_PATH,
-      // Para diagnóstico y compatibilidad dejamos ambos. Luego, si querés, podés forzar ["websocket"].
+    socket = io(SOCKET_URL, {
+      path: SOCKET_PATH,
+      // Durante diagnóstico dejamos ambos; luego podés forzar ["websocket"]
       transports: ["websocket", "polling"],
       autoConnect: true,
       withCredentials: true,
