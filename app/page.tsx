@@ -3,8 +3,9 @@
 import CurrencyDropdown from "@/components/CurrencyDropdown";
 import { Button } from "@/components/ui/button";
 import useAppStore from "@/lib/store";
+import { getSocket } from "@/lib/socket";
 import { ArrowUpDown } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 
 export default function Home() {
   const {
@@ -14,16 +15,17 @@ export default function Home() {
     convertServer, isSnapshotFresh
   } = useAppStore();
 
+  // Estado local de la UI
+  const [fromAmount, setFromAmount]       = useState<string>("1");
+  const [toAmount, setToAmount]           = useState<string>("");
+  const [activeField, setActiveField]     = useState<"from" | "to">("from");
+  const [rate, setRate]                   = useState<number | null>(null);
+  const [loadingRate, setLoadingRate]     = useState(false);
+
+  // 1) Carga inicial vía HTTP (tu server actual)
   useEffect(() => { obtainRates(); }, [obtainRates]);
 
-  const [fromAmount, setFromAmount] = useState<string>("1");
-  const [toAmount, setToAmount]     = useState<string>("");
-  const [activeField, setActiveField] = useState<"from" | "to">("from");
-
-  const [rate, setRate] = useState<number | null>(null);
-  const [loadingRate, setLoadingRate] = useState(false);
-
-  // Pedir rate al backend cuando cambian las monedas
+  // 2) Cargar rate inicial del par actual
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -37,7 +39,48 @@ export default function Home() {
     return () => { cancelled = true; };
   }, [convertServer, monedaOrigen, monedaDestino]);
 
-  // Recalcular el dependiente al cambiar rate o el par
+  // 3) Suscripción a eventos de Socket.IO (real-time)
+  useEffect(() => {
+    const socket = getSocket();
+
+    const onWelcome = (msg: string) => {
+      // console.log("welcome:", msg);
+    };
+
+    // Si tu backend emite un snapshot completo de rates
+    const onRatesSnapshot = (payload: { as_of_unix: number; data: Record<string, number> }) => {
+      // Si querés integrarlo con tu Zustand:
+      // useAppStore.setState({ rates: payload })  // si tu store lo admite
+      // O actualizar rate específico si llega el par actual embebido:
+      const pairKey = `${monedaOrigen}_${monedaDestino}`; // ajustá a tu esquema
+      const val = payload.data?.[pairKey];
+      if (typeof val === "number") setRate(val);
+    };
+
+    // Si tu backend emite updates puntuales de un par
+    const onRateUpdate = (payload: { from: string; to: string; rate: number }) => {
+      if (payload.from === monedaOrigen && payload.to === monedaDestino) {
+        setRate(payload.rate);
+      }
+    };
+
+    socket.on("welcome", onWelcome);
+    socket.on("rates:snapshot", onRatesSnapshot);
+    socket.on("rate:update", onRateUpdate);
+
+    // Emitir para unirse a una "sala" del par (si el server lo soporta)
+    socket.emit("pair:subscribe", { from: monedaOrigen, to: monedaDestino });
+
+    // Cleanup: desuscribirse y salir de sala
+    return () => {
+      socket.off("welcome", onWelcome);
+      socket.off("rates:snapshot", onRatesSnapshot);
+      socket.off("rate:update", onRateUpdate);
+      socket.emit("pair:unsubscribe", { from: monedaOrigen, to: monedaDestino });
+    };
+  }, [monedaOrigen, monedaDestino]);
+
+  // 4) Recalcular el dependiente al cambiar rate o par
   useEffect(() => {
     if (!rate) {
       if (activeField === "from") setToAmount("");
@@ -53,9 +96,9 @@ export default function Home() {
       if (!toAmount || !Number.isFinite(n)) { setFromAmount(""); return; }
       setFromAmount(String(n / rate));
     }
-  }, [rate, monedaOrigen, monedaDestino]);
+  }, [rate, monedaOrigen, monedaDestino]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Handlers de escritura
+  // Handlers de escritura (mantengo tu lógica)
   const handleFromChange = (value: string) => {
     setActiveField("from");
     setFromAmount(value);
@@ -71,6 +114,26 @@ export default function Home() {
     if (!rate || value === "" || !Number.isFinite(n)) { setFromAmount(""); return; }
     setFromAmount(String(n / rate));
   };
+
+  // (Opcional) emitir una conversión con ack (útil si querés que el server valide y devuelva el valor)
+  const requestServerConversion = useCallback((amount: number) => {
+    const socket = getSocket();
+    socket.timeout(3000).emit(
+      "convert",
+      { from: monedaOrigen, to: monedaDestino, amount },
+      (err: any, res: { rate?: number; result?: number }) => {
+        if (err) {
+          console.error("Timeout/err en convert:", err);
+          return;
+        }
+        if (typeof res?.rate === "number") setRate(res.rate);
+        if (typeof res?.result === "number") {
+          if (activeField === "from") setToAmount(String(res.result));
+          else setFromAmount(String(res.result));
+        }
+      }
+    );
+  }, [monedaOrigen, monedaDestino, activeField]);
 
   // Solo para mostrar (no tocar estado)
   const pretty = (v: string) => {
@@ -125,6 +188,9 @@ export default function Home() {
       <p className="text-xs text-neutral-500">
         Last updated: {lastUpdatedText} {isSnapshotFresh() ? "" : <span className="text-amber-500 ml-1">stale</span>}
       </p>
+
+      {/* (Opcional) botón para pedir conversión vía socket/ack */}
+      {/* <Button onClick={() => requestServerConversion(Number(fromAmount) || 0)}>Convertir en server</Button> */}
     </div>
   );
 }
