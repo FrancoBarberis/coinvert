@@ -1,6 +1,7 @@
 
 import "./globals.css";
 import type { Metadata } from "next";
+import {interTight, spaceGrotesk} from "./fonts";
 
 // TODO:
 // io("https://tu-backend.com", { transports: ["websocket", "polling"] });
@@ -16,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${interTight.variable} ${spaceGrotesk.variable}`}>
       <body
         className="h-screen w-full text-white bg-linear-to-t from-gray-700 via-gray-500 to-gray-700 flex flex-col items-center justify-center"
       >
