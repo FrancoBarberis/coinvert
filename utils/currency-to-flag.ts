@@ -1,42 +1,100 @@
 
 // utils/currency-to-flag.ts
-// Mapeo rápido de moneda (ISO 4217) → país (ISO 3166-1 alpha-2)
+
+export type CurrencyCode = string;
+
+/**
+ * Monedas que NO representan un país
+ * → no mostrar bandera
+ */
+const NON_FLAG_CURRENCIES = new Set([
+  "XDR",
+  "CLF",
+  "CNH",
+]);
+
+/**
+ * Mapping principal ISO 4217 → ISO 3166-1 alpha-2
+ * Solo donde tiene sentido mostrar bandera
+ */
 const CURRENCY_TO_COUNTRY: Record<string, string> = {
+  // América
   ARS: "AR",
-  USD: "US",
-  EUR: "EU", // 👈 para euro no hay una bandera oficial de país; usamos "EU" (emojis no estándar).
+  BOB: "BO",
   BRL: "BR",
-  GBP: "GB",
-  JPY: "JP",
-  CLP: "CL",
-  UYU: "UY",
-  PYG: "PY",
-  COP: "CO",
-  MXN: "MX",
   CAD: "CA",
-  AUD: "AU",
-  NZD: "NZ",
+  CLP: "CL",
+  COP: "CO",
+  CRC: "CR",
+  MXN: "MX",
+  PEN: "PE",
+  PYG: "PY",
+  UYU: "UY",
+  USD: "US",
+
+  // Europa
+  GBP: "GB",
+  CHF: "CH",
+  NOK: "NO",
+  SEK: "SE",
+  DKK: "DK",
+  CZK: "CZ",
+  PLN: "PL",
+  RON: "RO",
+  HUF: "HU",
+
+  // Asia
+  JPY: "JP",
+  KRW: "KR",
   CNY: "CN",
   INR: "IN",
-  CHF: "CH",
-  SEK: "SE",
-  NOK: "NO",
-  DKK: "DK",
-  // ...agregá las que uses
+  THB: "TH",
+  IDR: "ID",
+  PHP: "PH",
+
+  // África
+  ZAR: "ZA",
+  NGN: "NG",
+  KES: "KE",
+  MAD: "MA",
+
+  // Oceanía
+  AUD: "AU",
+  NZD: "NZ",
+
+  // Regionales
+  EUR: "EU",
 };
 
-// Convierte "AR" → 🇦🇷; "US" → 🇺🇸
-function countryCodeToFlagEmoji(cc: string) {
-  // Para "EU" no hay bandera emoji estándar; devolvemos símbolo europeo u otra marca
-  if (cc.toUpperCase() === "EU") return "🇪🇺";
-  return cc
+/** Convierte ISO 3166‑1 alpha‑2 → emoji */
+function countryToEmoji(code: string): string {
+  if (code === "EU") return "🇪🇺";
+
+  return code
     .toUpperCase()
-    .replace(/./g, (ch) =>
-      String.fromCodePoint(0x1f1e6 - 65 + ch.charCodeAt(0))
+    .replace(/[^\p{L}]/gu, "")
+    .replace(/./g, char =>
+      String.fromCodePoint(0x1f1e6 + char.charCodeAt(0) - 65)
     );
 }
 
-export function currencyToFlagEmoji(currency: string): string {
-  const cc = CURRENCY_TO_COUNTRY[currency.toUpperCase()];
-  return cc ? countryCodeToFlagEmoji(cc) : "🏳️"; // fallback neutro
+/** API pública */
+export function currencyToFlagEmoji(currency: CurrencyCode): string {
+  if (!currency) return "🏳️";
+
+  const code = currency.toUpperCase();
+
+  // 1️⃣ Monedas sin bandera
+  if (NON_FLAG_CURRENCIES.has(code)) {
+    return "◻️"; // o 💱 o 🏦
+  }
+
+  // 2️⃣ Mapping conocido
+  const country = CURRENCY_TO_COUNTRY[code];
+  if (country) {
+    return countryToEmoji(country);
+  }
+
+  // 3️⃣ Fallback seguro (no mentir)
+  return "🏳️";
 }

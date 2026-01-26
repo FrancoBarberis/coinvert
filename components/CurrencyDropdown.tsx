@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { CURRENCY_CODES as currencyCodes } from "../data/currency-codes";
+import { currencyToFlagEmoji } from "@/utils/currency-to-flag";
 
 type CurrencyDropdownProps = {
   currencyName: string;
@@ -17,6 +18,19 @@ type CurrencyDropdownProps = {
   amount: string;
   onAmountChange: (v: string) => void;
 };
+
+//TEST ENV
+export function ExposeEnv() {
+  if (typeof window !== "undefined") {
+    (window as any).__SOCKET_DEBUG__ = {
+      URL: process.env.NEXT_PUBLIC_SOCKET_URL,
+      PATH: process.env.NEXT_PUBLIC_SOCKET_PATH,
+    };
+    console.log("[ExposeEnv] window.__SOCKET_DEBUG__ listo");
+  }
+  return null;
+}
+
 
 export default function CurrencyDropdown({
   currencyName,
@@ -47,7 +61,14 @@ export default function CurrencyDropdown({
                 dark:hover:bg-neutral-800
               "
             >
-              <span className="font-semibold">{currencyName}</span>
+
+              <span className="font-semibold flex items-center gap-2">
+                <span className="emoji text-base">
+                  {currencyToFlagEmoji(currencyName)}
+                </span>
+                <span>{currencyName}</span>
+              </span>
+
               <span aria-hidden>▾</span>
             </Button>
           </DropdownMenuTrigger>

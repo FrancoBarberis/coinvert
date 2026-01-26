@@ -135,3 +135,14 @@
   font-style: normal;      /* o italic si corresponde */
   font-display: swap;      /* evita FOIT */
 }
+
+
+.emoji {
+  font-family:
+    "Segoe UI Emoji",          /* Windows */
+    "Apple Color Emoji",       /* macOS/iOS, por si lo abrís desde otro equipo */
+    "Noto Color Emoji",        /* Linux */
+    "Twemoji Mozilla",
+    system-ui, sans-serif;
+  font-variant-emoji: emoji;   /* ayuda en algunos navegadores */
+}

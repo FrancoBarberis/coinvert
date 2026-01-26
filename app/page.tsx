@@ -6,6 +6,7 @@ import useAppStore from "@/lib/store";
 import { getSocket } from "@/lib/socket";
 import { ArrowUpDown } from "lucide-react";
 import { useEffect, useMemo, useState, useCallback } from "react";
+import { ExposeEnv } from "@/components/CurrencyDropdown";
 
 export default function Home() {
   const {
@@ -148,6 +149,7 @@ export default function Home() {
 
   return (
     <div className="items-center justify-center w-full min-h-screen flex flex-col gap-6 px-4">
+      <ExposeEnv />
       <h1 className="font-extrabold text-emerald-500 text-4xl lg:text-5xl">Coinvert</h1>
       <h3 className="text-base lg:text-lg text-center max-w-[90%]">
         Your free currency conversion tool
