@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { CURRENCY_CODES as currencyCodes } from "../data/currency-codes";
 import { currencyToFlagEmoji } from "@/utils/currency-to-flag";
+import { sanitizeWhileTyping, formatMinimalDecimals } from "@/utils/format-minimal-decimals";
 
 type CurrencyDropdownProps = {
   currencyName: string;
@@ -24,7 +25,7 @@ export default function CurrencyDropdown({
   onChange,
   options,
   amount,
-  onAmountChange
+  onAmountChange,
 }: CurrencyDropdownProps) {
   const codes = options ?? currencyCodes;
 
@@ -57,6 +58,7 @@ export default function CurrencyDropdown({
               <span aria-hidden>▾</span>
             </Button>
           </DropdownMenuTrigger>
+
           <DropdownMenuContent
             align="start"
             sideOffset={6}
@@ -78,19 +80,26 @@ export default function CurrencyDropdown({
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
+
         {/* Input unido al trigger */}
         <input
-          type="number"
+          type="text"               // ← mejor control que "number" para UX
+          inputMode="decimal"       // teclado numérico en móviles
           value={amount}
           onFocus={(e) => {
             const input = e.currentTarget;
-            // Esperar al siguiente tick evita peleas con el focus en algunos browsers
             setTimeout(() => {
               input.select();
             }, 0);
           }}
-          onChange={(e) => onAmountChange(e.target.value)}
-          min={0}
+          onChange={(e) => {
+            const next = sanitizeWhileTyping(e.target.value);
+            onAmountChange(next);
+          }}
+          onBlur={(e) => {
+            const normalized = formatMinimalDecimals(e.target.value);
+            onAmountChange(normalized);
+          }}
           className="
             h-12 w-full m-0
             text-right text-lg pr-3
@@ -100,6 +109,7 @@ export default function CurrencyDropdown({
             rounded-br-md
             dark:bg-neutral-900 dark:text-neutral-100 dark:border-neutral-700
           "
+          placeholder="0"
         />
       </div>
     </div>
