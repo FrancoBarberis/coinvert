@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { CURRENCY_CODES as currencyCodes } from "../data/currency-codes";
-import { currencyToFlagEmoji } from "@/utils/currency-to-flag";
+import { currencyToFlagIconCode } from "@/utils/currency-to-flag";
 import { sanitizeWhileTyping, formatMinimalDecimals } from "@/utils/format-minimal-decimals";
 
 type CurrencyDropdownProps = {
@@ -28,6 +28,8 @@ export default function CurrencyDropdown({
   onAmountChange,
 }: CurrencyDropdownProps) {
   const codes = options ?? currencyCodes;
+
+  const flagCode = currencyToFlagIconCode(currencyName); // "ar" | "us" | "eu" | null
 
   return (
     <div className="mx-auto w-[90%] lg:w-[40%]">
@@ -50,9 +52,12 @@ export default function CurrencyDropdown({
               "
             >
               <span className="font-semibold flex items-center gap-2">
-                <span className="emoji">
-                  {currencyToFlagEmoji(currencyName)}
-                </span>
+                {/* Bandera SVG (flag-icons) o fallback 💱 */}
+                {flagCode ? (
+                  <span className={`fi fi-${flagCode} w-5 h-5`} aria-hidden />
+                ) : (
+                  <span className="text-neutral-100/80" aria-hidden>💱</span>
+                )}
                 <span>{currencyName}</span>
               </span>
               <span aria-hidden>▾</span>
@@ -63,41 +68,43 @@ export default function CurrencyDropdown({
             align="start"
             sideOffset={6}
             className="
-              w-48 max-h-64 overflow-auto
+              w-56 max-h-64 overflow-auto
               bg-white text-neutral-900
               dark:bg-neutral-900 dark:text-neutral-100
               z-50
             "
           >
-            {codes.map((code) => (
-              <DropdownMenuItem
-                key={code}
-                onClick={() => onChange?.(code)}
-                className="font-medium text-[.8rem] cursor-pointer"
-              >
-                {code}
-              </DropdownMenuItem>
-            ))}
+            {codes.map((code) => {
+              const c = currencyToFlagIconCode(code);
+              return (
+                <DropdownMenuItem
+                  key={code}
+                  onClick={() => onChange?.(code)}
+                  className="font-medium text-[.9rem] cursor-pointer flex items-center gap-2"
+                >
+                  {c ? <span className={`fi fi-${c}`} aria-hidden /> : <span aria-hidden>💱</span>}
+                  <span>{code}</span>
+                </DropdownMenuItem>
+              );
+            })}
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Input unido al trigger */}
+        {/* Input unido al trigger: decimales mínimos */}
         <input
-          type="text"               // ← mejor control que "number" para UX
-          inputMode="decimal"       // teclado numérico en móviles
+          type="text"            // control total del string
+          inputMode="decimal"    // teclado decimal en mobile
           value={amount}
           onFocus={(e) => {
             const input = e.currentTarget;
-            setTimeout(() => {
-              input.select();
-            }, 0);
+            setTimeout(() => input.select(), 0);
           }}
           onChange={(e) => {
-            const next = sanitizeWhileTyping(e.target.value);
+            const next = sanitizeWhileTyping(e.target.value); // permite "1.", ".5", etc.
             onAmountChange(next);
           }}
           onBlur={(e) => {
-            const normalized = formatMinimalDecimals(e.target.value);
+            const normalized = formatMinimalDecimals(e.target.value); // "solo los decimales necesarios"
             onAmountChange(normalized);
           }}
           className="

@@ -2,6 +2,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import {interTight, spaceGrotesk} from "./fonts";
+import "flag-icons/css/flag-icons.min.css";
 
 // TODO:
 // io("https://tu-backend.com", { transports: ["websocket", "polling"] });
