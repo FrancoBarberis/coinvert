@@ -4,6 +4,7 @@
  */
 // __tests__/socket.through-proxy.test.ts
 
+import { CurrencyCode } from "@/data/currency-codes";
 import { io, Socket, ManagerOptions, SocketOptions } from "socket.io-client";
 
 const URL = process.env.SOCKET_PROXY_URL ?? "http://127.0.0.1:4000";
@@ -79,7 +80,7 @@ describe("Socket.IO a través del proxy/backend real", () => {
   it("si el server emite rates:init al arrancar, lo recibimos", async () => {
     socket = await connect(URL);
 
-    const initPayload = await new Promise<any>((resolve, reject) => {
+    const initPayload = await new Promise<CurrencyCode>((resolve, reject) => {
       const timer = setTimeout(() => reject(new Error("Timeout esperando rates:init")), 5000);
       socket.once("rates:init", (p) => {
         clearTimeout(timer);
