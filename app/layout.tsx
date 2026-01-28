@@ -3,7 +3,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { interTight, spaceGrotesk } from "./fonts";
 import "flag-icons/css/flag-icons.min.css";
-import ogImage from "../public/CoinvertOGLogo.png";
+import ogimage from "../public/CoinvertOGLogo.png";
 
 const PROD_URL = "https://coinvert-5f0y8215k-francobarberis-projects.vercel.app";
 // const PROD_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -25,9 +25,9 @@ export const metadata: Metadata = {
     images: [
       {
         // Usamos ogImage.src (string) y, gracias a metadataBase, Next genera URL absoluta
-        url: ogImage.src,
-        width: ogImage.width,   // número
-        height: ogImage.height, // número
+        url: ogimage.src,
+        width: ogimage.width,   // número
+        height: ogimage.height, // número
         alt: "Coinvert - Real-time currency converter",
       },
     ],
@@ -36,9 +36,9 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Coinvert",
     description: "Real-time currency converter.",
-    images: [ogImage.src],      // también aceptado
+    images: [ogimage.src],      // también aceptado
   },
-};
+} satisfies Metadata;
 
 export default function RootLayout({
   children,

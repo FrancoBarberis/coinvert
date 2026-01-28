@@ -5,6 +5,7 @@
 // __tests__/socket.through-proxy.test.ts
 
 import { CurrencyCode } from "@/data/currency-codes";
+import { ExchangeRatesSnapshotWithMeta } from "@/types/exchange";
 import { io, Socket, ManagerOptions, SocketOptions } from "socket.io-client";
 
 const URL = process.env.SOCKET_PROXY_URL ?? "http://127.0.0.1:4000";
@@ -56,7 +57,7 @@ describe("Socket.IO a través del proxy/backend real", () => {
     socket = await connect(URL);
 
     // Esperar la primera respuesta de data tras pedir rates:get
-    const dataPromise = new Promise<any>((resolve, reject) => {
+    const dataPromise = new Promise<ExchangeRatesSnapshotWithMeta>((resolve, reject) => {
       const timer = setTimeout(() => reject(new Error("Timeout esperando rates:data")), 7000);
 
       socket.once("rates:data", (payload) => {
@@ -74,13 +75,13 @@ describe("Socket.IO a través del proxy/backend real", () => {
     expect(typeof payload.as_of_unix).toBe("number"); // tu backend debería enviarlo ahora
     // rates/rates.conversion_rates depende de tu shape; valida lo que esperes
     // Por ejemplo, si envías { rates: { USD: 1, ARS: 1000, ... } }
-    expect(payload.rates || payload.conversion_rates).toBeTruthy();
+    expect(payload.rates).toBeTruthy();
   });
 
   it("si el server emite rates:init al arrancar, lo recibimos", async () => {
     socket = await connect(URL);
 
-    const initPayload = await new Promise<CurrencyCode>((resolve, reject) => {
+    const initPayload = await new Promise<ExchangeRatesSnapshotWithMeta>((resolve, reject) => {
       const timer = setTimeout(() => reject(new Error("Timeout esperando rates:init")), 5000);
       socket.once("rates:init", (p) => {
         clearTimeout(timer);
